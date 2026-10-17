@@ -14,12 +14,26 @@ export function AppHeader() {
           <Link href="/challenges" className="font-semibold tracking-tight">
             StratCode
           </Link>
-          <Link
-            href="/challenges"
-            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Challenges
-          </Link>
+          <nav className="flex items-center gap-4 text-sm text-muted-foreground">
+            <Link
+              href="/challenges"
+              className="transition-colors hover:text-foreground"
+            >
+              Challenges
+            </Link>
+            <Link
+              href="/leaderboard"
+              className="transition-colors hover:text-foreground"
+            >
+              Leaderboard
+            </Link>
+            <Link
+              href="/profile"
+              className="transition-colors hover:text-foreground"
+            >
+              Profile
+            </Link>
+          </nav>
         </div>
         <Suspense fallback={<Skeleton className="h-6 w-44" />}>
           <UserMenu />

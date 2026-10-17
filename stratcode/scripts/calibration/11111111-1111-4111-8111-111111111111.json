@@ -1,0 +1,137 @@
+{
+  "exemplars": [
+    {
+      "label": "weak",
+      "stage1": [
+        {
+          "id": "w1",
+          "text": "Sales were down slightly in Q2",
+          "children": []
+        },
+        {
+          "id": "w2",
+          "text": "Costs went up because of changes in the shop",
+          "children": []
+        }
+      ],
+      "stage2": {
+        "q1_margin": 22.52,
+        "q2_margin": 15.38,
+        "rev_change": -2.0,
+        "mix_effect": -3.0,
+        "price_effect": -1.0,
+        "cost_effect": -1.0
+      },
+      "stage3": "We need to raise prices across all products and cut costs right away. Profits went down between Q1 and Q2 so the coffee shop should stop offering discounts and find cheaper ingredients so that margins go back up next quarter."
+    },
+    {
+      "label": "medium",
+      "stage1": [
+        {
+          "id": "m1",
+          "text": "Price changes across products",
+          "children": [
+            {
+              "id": "m1_1",
+              "text": "Loyalty discount lowered average price paid",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "m2",
+          "text": "Product mix shift between Q1 and Q2",
+          "children": [
+            {
+              "id": "m2_1",
+              "text": "More lattes sold and fewer drip coffees and pastries",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "m3",
+          "text": "Unit cost changes",
+          "children": [
+            {
+              "id": "m3_1",
+              "text": "Oat milk default increased latte cost",
+              "children": []
+            },
+            {
+              "id": "m3_2",
+              "text": "Drip coffee supplier change",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "stage2": {
+        "q1_margin": 22.52,
+        "q2_margin": 15.38,
+        "rev_change": -5.55,
+        "mix_effect": -0.60,
+        "price_effect": -2.50,
+        "cost_effect": -4.00
+      },
+      "stage3": "Variable margin fell from 22.52% in Q1 to 15.38% in Q2. Both lower average prices from the loyalty discount and higher latte costs from the oat milk switch hurt profitability. I recommend adding a $0.50 surcharge for oat milk and reducing the loyalty discount so average prices recover. We should check margins again at the end of Q3."
+    },
+    {
+      "label": "strong",
+      "stage1": [
+        {
+          "id": "s1",
+          "text": "1. Average realized price decline (Priority 1 — test first: affects both Lattes and Drip)",
+          "children": [
+            {
+              "id": "s1_1",
+              "text": "Hypothesis: Loyalty discount reduced avg_price on Lattes ($5.00 to $4.75) and Drip ($3.00 to $2.85), cutting margin by ~3.3 pp",
+              "children": []
+            },
+            {
+              "id": "s1_2",
+              "text": "Hypothesis: Pastry avg_price stayed flat at $4.00, so discounting is concentrated in beverages",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "s2",
+          "text": "2. Variable unit cost increase (Priority 1 — equal driver to price, concentrated in Lattes)",
+          "children": [
+            {
+              "id": "s2_1",
+              "text": "Hypothesis: Default oat milk raised Latte unit_cost from $4.00 to $4.30 (+$0.30/unit), compressing Latte margin from 20.0% to 9.47%",
+              "children": []
+            },
+            {
+              "id": "s2_2",
+              "text": "Hypothesis: Drip supplier switch did NOT change Drip unit_cost ($2.40 in both Q1 and Q2); Drip margin fell only due to avg_price drop",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "s3",
+          "text": "3. Product mix shift (Priority 2 — minor driver; note total volume alone does not change margin %)",
+          "children": [
+            {
+              "id": "s3_1",
+              "text": "Hypothesis: Share shifted toward 20%-margin Lattes (1,000 to 1,300 units) and away from 30%-margin Pastries (800 to 600 units), costing ~0.60 pp",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "stage2": {
+        "q1_margin": 22.52,
+        "q2_margin": 15.38,
+        "rev_change": -5.55,
+        "mix_effect": -0.60,
+        "price_effect": -3.29,
+        "cost_effect": -3.25
+      },
+      "stage3": "Restore Brew & Co.'s variable margin from 15.38% back above 21% by unbundling oat milk (+$0.35 surcharge or revert to dairy default) and restructuring the loyalty discount to require a pastry bundle.\n\nDiagnosis: Total variable margin fell 7.14 pp (22.52% in Q1 to 15.38% in Q2), while revenue fell 5.55% ($12,700 to $11,995). Price (-3.29 pp) and unit cost (-3.25 pp) were nearly equal drivers, while product mix was minor (-0.60 pp). Lattes are the core problem: switching to default oat milk raised Latte unit_cost from $4.00 to $4.30 while the loyalty discount cut Latte avg_price from $5.00 to $4.75, collapsing Latte margin from 20.0% to 9.47% even as Latte volume grew 30% (1,000 to 1,300). Contrary to expectations, the drip supplier change left Drip unit_cost flat at $2.40; Drip margin fell from 20.0% to 15.79% solely because avg_price dropped from $3.00 to $2.85.\n\nRecommendations:\n1. Make dairy the default milk and charge a +$0.35 oat milk add-on (or +$0.30 minimum), recovering the $0.30/unit cost increase on Lattes.\n2. Cap the loyalty discount at 5% and apply it only on orders that pair a beverage with a 30%-margin Pastry (reversing the 800 to 600 unit pastry drop).\n\nRisks & Mitigation: Charging for oat milk risks losing price-sensitive Latte volume (which grew +300 units in Q2). Monitor weekly Latte units_sold; if volume drops more than 10% below Q1 levels (<900 units/quarter pace), offer free oat milk exclusively as the loyalty reward tier.\n\nNext Step: Run a 4-week POS test in Q3 tracking weekly Latte unit margin (target >=18%), Drip avg_price (target >=$2.95), and Pastry attach rate (target >=750 units/quarter pace)."
+    }
+  ]
+}
