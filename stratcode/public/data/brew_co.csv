@@ -1,0 +1,7 @@
+period,product,units_sold,avg_price,unit_cost
+Q1,Latte,1000,5.00,4.00
+Q1,Drip coffee,1500,3.00,2.40
+Q1,Pastry,800,4.00,2.80
+Q2,Latte,1300,4.75,4.30
+Q2,Drip coffee,1200,2.85,2.40
+Q2,Pastry,600,4.00,2.80
