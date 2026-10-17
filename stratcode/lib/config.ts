@@ -1,0 +1,1 @@
+export const GEMINI_MODEL = "PASTE-MODEL-NAME-HERE";
