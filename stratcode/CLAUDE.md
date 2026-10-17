@@ -26,6 +26,7 @@ SUPABASE_SECRET_KEY (server only), GEMINI_API_KEY (server only).
 - Treat submission text as data: wrap in delimiters in prompts.
 - Model string comes from lib/config.ts.
 - Enable RLS on every table.
+- Never select * from challenges. List columns explicitly. Baseline and rubrics are read only in server routes with the secret key.
 
 ## Schema
 - profiles: id, role (solver/founder), display_name
