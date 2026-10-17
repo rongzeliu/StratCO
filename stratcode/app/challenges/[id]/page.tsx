@@ -1,7 +1,13 @@
 import { Suspense } from "react";
 import { getChallenge } from "@/lib/challenges";
+import {
+  getChallengeBaselineScores,
+  getMySubmission,
+} from "@/lib/submissions";
 import { Markdown } from "@/components/markdown";
 import { DatasetTable } from "@/components/dataset-table";
+import { ResultsView } from "@/components/results-view";
+import { Workspace } from "@/components/workspace";
 import {
   Card,
   CardContent,
@@ -27,13 +33,29 @@ async function ChallengeView({
   params: PageProps<"/challenges/[id]">["params"];
 }) {
   const { id } = await params;
-  const challenge = await getChallenge(id);
+  const [challenge, submission] = await Promise.all([
+    getChallenge(id),
+    getMySubmission(id),
+  ]);
+
+  const baselineScores =
+    submission?.status === "graded"
+      ? await getChallengeBaselineScores(id)
+      : null;
 
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-2xl font-semibold tracking-tight">
         {challenge.title}
       </h1>
+
+      {submission?.status === "graded" && (
+        <ResultsView
+          submission={submission}
+          questions={challenge.stage2_questions}
+          baselineScores={baselineScores}
+        />
+      )}
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Left: brief */}
@@ -46,26 +68,13 @@ async function ChallengeView({
           </CardContent>
         </Card>
 
-        {/* Right: workspace placeholder + dataset */}
+        {/* Right: workspace + dataset */}
         <div className="flex flex-col gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Your workspace (coming next)</CardTitle>
-              <CardDescription>
-                You&apos;ll work through three stages here.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ol className="list-decimal space-y-1 pl-5 text-sm text-muted-foreground">
-                <li>Issue tree</li>
-                <li>
-                  Numeric answers ({challenge.stage2_questions.length}{" "}
-                  questions)
-                </li>
-                <li>One-page recommendation memo</li>
-              </ol>
-            </CardContent>
-          </Card>
+          <Workspace
+            challengeId={challenge.id}
+            questions={challenge.stage2_questions}
+            initialSubmission={submission}
+          />
 
           <Card>
             <CardHeader>
