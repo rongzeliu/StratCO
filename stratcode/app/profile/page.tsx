@@ -40,13 +40,12 @@ export default function ProfilePage() {
   return (
     <div className="flex flex-1 flex-col">
       <AppHeader />
-      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 py-8">
-        <div className="flex flex-col gap-6">
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight">Profile</h1>
-            <p className="text-sm text-muted-foreground">
-              Manage your public display name, graded submissions, and founder
-              vouches.
+      <main className="mx-auto flex w-full max-w-[1120px] flex-1 flex-col px-6 py-10">
+        <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-2">
+            <h1 className="text-page-title">Profile</h1>
+            <p className="text-secondary">
+              Manage your display name, graded submissions, and founder vouches.
             </p>
           </div>
 
@@ -83,9 +82,7 @@ async function ProfileContent() {
       .select("id, role, display_name")
       .eq("id", user.id)
       .maybeSingle(),
-    supabase
-      .from("challenges")
-      .select("id, title"),
+    supabase.from("challenges").select("id, title"),
     supabase
       .from("submissions")
       .select("id, challenge_id, scores, baseline_delta, status")
@@ -113,14 +110,13 @@ async function ProfileContent() {
     ])
   );
 
-  // Only show vouches belonging to this solver's submissions (in case the user is also a founder).
   const mySubmissionIds = new Set((gradedSubmissions ?? []).map((s) => s.id));
   const receivedVouches = (vouches ?? []).filter((v) =>
     mySubmissionIds.has(v.submission_id)
   );
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8">
       {/* Display Name Card */}
       <Card>
         <CardHeader>
@@ -129,8 +125,8 @@ async function ProfileContent() {
             <Badge variant="secondary">{profile?.role ?? "solver"}</Badge>
           </div>
           <CardDescription>
-            Shown on the leaderboard and founder review dashboard instead of
-            your email.
+            Shown on the leaderboard and founder dashboard instead of your
+            email.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -143,16 +139,16 @@ async function ProfileContent() {
         <CardHeader>
           <CardTitle>Graded submissions</CardTitle>
           <CardDescription>
-            Your completed cases and stage score bars (0 to 10)
+            Completed cases and stage scores (0 to 10)
           </CardDescription>
         </CardHeader>
         <CardContent>
           {!gradedSubmissions || gradedSubmissions.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-secondary">
               You have no graded submissions yet.
             </p>
           ) : (
-            <div className="flex flex-col gap-4">
+            <div className="divide-y divide-border">
               {gradedSubmissions.map((sub) => {
                 const scores = parseScores(sub.scores);
                 if (!scores) return null;
@@ -162,33 +158,27 @@ async function ProfileContent() {
                 return (
                   <div
                     key={sub.id}
-                    className="flex flex-col gap-3 rounded-xl border p-4"
+                    className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <Link
                         href={`/challenges/${sub.challenge_id}`}
-                        className="font-medium underline-offset-4 hover:underline"
+                        className="focus-ring rounded-[10px] font-medium text-primary hover:underline"
                       >
                         {title}
                       </Link>
-                      <Badge variant="default" className="font-mono">
+                      <Badge variant="secondary" className="tabular">
                         Total: {scores.total} / 100
                       </Badge>
                     </div>
 
-                    <div className="grid gap-3 sm:grid-cols-3">
+                    <div className="grid gap-4 sm:grid-cols-3">
                       <StageScoreBar
-                        label="Stage 1: Issue tree"
+                        label="Issue tree"
                         score={scores.stage1}
                       />
-                      <StageScoreBar
-                        label="Stage 2: Numbers"
-                        score={scores.stage2}
-                      />
-                      <StageScoreBar
-                        label="Stage 3: Memo"
-                        score={scores.stage3}
-                      />
+                      <StageScoreBar label="Numbers" score={scores.stage2} />
+                      <StageScoreBar label="Memo" score={scores.stage3} />
                     </div>
                   </div>
                 );
@@ -208,24 +198,22 @@ async function ProfileContent() {
         </CardHeader>
         <CardContent>
           {receivedVouches.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              No vouches received yet.
-            </p>
+            <p className="text-secondary">No vouches received yet.</p>
           ) : (
-            <div className="flex flex-col gap-3">
+            <div className="divide-y divide-border">
               {receivedVouches.map((v) => (
                 <div
                   key={v.id}
-                  className="flex flex-col gap-1.5 rounded-xl border bg-muted/30 p-4"
+                  className="flex flex-col gap-1.5 py-4 first:pt-0 last:pb-0"
                 >
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <div className="flex items-center justify-between">
                     <span className="font-medium text-foreground">
                       {submissionChallengeById.get(v.submission_id) ??
                         "Verified submission"}
                     </span>
-                    <Badge variant="default">Vouched</Badge>
+                    <Badge variant="secondary">Vouched</Badge>
                   </div>
-                  <p className="text-sm leading-relaxed">
+                  <p className="max-w-[65ch] text-secondary">
                     {v.outcome_note ?? "Verified by founder."}
                   </p>
                 </div>
@@ -241,12 +229,14 @@ async function ProfileContent() {
 function StageScoreBar({ label, score }: { label: string; score: number }) {
   const pct = Math.min(100, Math.max(0, (score / 10) * 100));
   return (
-    <div className="flex flex-col gap-1">
-      <div className="flex items-center justify-between text-xs">
-        <span className="text-muted-foreground">{label}</span>
-        <span className="font-mono font-medium tabular-nums">{score} / 10</span>
+    <div className="flex flex-col gap-1.5">
+      <div className="flex items-center justify-between text-caption">
+        <span>{label}</span>
+        <span className="tabular font-medium text-foreground">
+          {score} / 10
+        </span>
       </div>
-      <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
         <div
           className="h-full rounded-full bg-primary"
           style={{ width: `${pct}%` }}
@@ -258,10 +248,10 @@ function StageScoreBar({ label, score }: { label: string; score: number }) {
 
 function ProfileSkeleton() {
   return (
-    <div className="flex flex-col gap-6">
-      <Skeleton className="h-40 rounded-xl" />
-      <Skeleton className="h-48 rounded-xl" />
-      <Skeleton className="h-36 rounded-xl" />
+    <div className="flex flex-col gap-8">
+      <Skeleton className="h-40 rounded-[12px]" />
+      <Skeleton className="h-48 rounded-[12px]" />
+      <Skeleton className="h-36 rounded-[12px]" />
     </div>
   );
 }

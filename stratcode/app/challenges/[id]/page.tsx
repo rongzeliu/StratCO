@@ -44,10 +44,8 @@ async function ChallengeView({
       : null;
 
   return (
-    <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-semibold tracking-tight">
-        {challenge.title}
-      </h1>
+    <div className="flex flex-col gap-10">
+      <h1 className="text-page-title">{challenge.title}</h1>
 
       {submission?.status === "graded" && (
         <ResultsView
@@ -57,7 +55,7 @@ async function ChallengeView({
         />
       )}
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid items-start gap-8 lg:grid-cols-2">
         {/* Left: brief */}
         <Card>
           <CardHeader>
@@ -69,7 +67,7 @@ async function ChallengeView({
         </Card>
 
         {/* Right: workspace + dataset */}
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-8">
           <Workspace
             challengeId={challenge.id}
             questions={challenge.stage2_questions}
@@ -89,9 +87,7 @@ async function ChallengeView({
               {challenge.csv_url ? (
                 <DatasetTable csvUrl={challenge.csv_url} />
               ) : (
-                <p className="text-sm text-muted-foreground">
-                  No dataset for this challenge.
-                </p>
+                <p className="text-secondary">No dataset for this challenge.</p>
               )}
             </CardContent>
           </Card>
@@ -103,13 +99,13 @@ async function ChallengeView({
 
 function ChallengeSkeleton() {
   return (
-    <div className="flex flex-col gap-6">
-      <Skeleton className="h-8 w-2/3" />
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Skeleton className="h-96 rounded-xl" />
-        <div className="flex flex-col gap-6">
-          <Skeleton className="h-40 rounded-xl" />
-          <Skeleton className="h-56 rounded-xl" />
+    <div className="flex flex-col gap-10">
+      <Skeleton className="h-9 w-2/3" />
+      <div className="grid gap-8 lg:grid-cols-2">
+        <Skeleton className="h-96 rounded-[12px]" />
+        <div className="flex flex-col gap-8">
+          <Skeleton className="h-64 rounded-[12px]" />
+          <Skeleton className="h-56 rounded-[12px]" />
         </div>
       </div>
     </div>

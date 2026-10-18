@@ -30,7 +30,9 @@ function parseCsv(text: string): Parsed {
   const numeric = header.map(
     (_, i) =>
       rows.length > 0 &&
-      rows.every((r) => r[i] !== undefined && r[i] !== "" && !isNaN(Number(r[i])))
+      rows.every(
+        (r) => r[i] !== undefined && r[i] !== "" && !isNaN(Number(r[i]))
+      )
   );
   return { header, rows, numeric };
 }
@@ -63,8 +65,9 @@ export function DatasetTable({ csvUrl }: { csvUrl: string }) {
   }
   if (state.status === "error") {
     return (
-      <p className="text-sm text-destructive">
-        Couldn&apos;t load the dataset ({state.message}).
+      <p className="text-secondary text-destructive">
+        Could not load the dataset ({state.message}). Reload the page to try
+        again.
       </p>
     );
   }
@@ -75,7 +78,10 @@ export function DatasetTable({ csvUrl }: { csvUrl: string }) {
       <TableHeader>
         <TableRow>
           {header.map((h, i) => (
-            <TableHead key={h} className={numeric[i] ? "text-right" : undefined}>
+            <TableHead
+              key={h}
+              className={numeric[i] ? "text-right" : undefined}
+            >
               {h}
             </TableHead>
           ))}
@@ -87,7 +93,7 @@ export function DatasetTable({ csvUrl }: { csvUrl: string }) {
             {header.map((_, i) => (
               <TableCell
                 key={i}
-                className={numeric[i] ? "text-right font-mono tabular-nums" : undefined}
+                className={numeric[i] ? "tabular text-right" : undefined}
               >
                 {row[i] ?? ""}
               </TableCell>

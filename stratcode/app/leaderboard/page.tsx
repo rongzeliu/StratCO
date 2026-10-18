@@ -32,13 +32,11 @@ export default function LeaderboardPage() {
   return (
     <div className="flex flex-1 flex-col">
       <AppHeader />
-      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 py-8">
-        <div className="flex flex-col gap-6">
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight">
-              Leaderboard
-            </h1>
-            <p className="text-sm text-muted-foreground">
+      <main className="mx-auto flex w-full max-w-[1120px] flex-1 flex-col px-6 py-10">
+        <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-2">
+            <h1 className="text-page-title">Leaderboard</h1>
+            <p className="text-secondary">
               Ranked graded submissions compared against the AI baseline.
             </p>
           </div>
@@ -56,38 +54,32 @@ async function LeaderboardContent() {
   const boards = await loadLeaderboardData();
 
   if (boards.length === 0) {
-    return (
-      <p className="text-sm text-muted-foreground">No challenges available.</p>
-    );
+    return <p className="text-secondary">No challenges available.</p>;
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8">
       {boards.map((board) => (
         <Card key={board.challengeId}>
           <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-col gap-1">
               <CardTitle>{board.challengeTitle}</CardTitle>
-              <CardDescription>
+              <CardDescription className="tabular">
                 {board.rows.length}{" "}
-                {board.rows.length === 1
-                  ? "graded solver"
-                  : "graded solvers"}
+                {board.rows.length === 1 ? "graded solver" : "graded solvers"}
               </CardDescription>
             </div>
 
             {board.currentUserPercentile !== null && (
-              <Badge variant="default">
-                better than {board.currentUserPercentile}% of solvers
+              <Badge variant="secondary" className="tabular">
+                Better than {board.currentUserPercentile}% of solvers
               </Badge>
             )}
           </CardHeader>
 
           <CardContent>
             {board.rows.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
-                No graded submissions yet.
-              </p>
+              <p className="text-secondary">No graded submissions yet.</p>
             ) : (
               <Table>
                 <TableHeader>
@@ -105,28 +97,28 @@ async function LeaderboardContent() {
                       key={row.rank}
                       className={
                         row.isCurrentUser
-                          ? "bg-muted/60 font-medium"
+                          ? "bg-secondary font-medium"
                           : undefined
                       }
                     >
-                      <TableCell className="font-mono tabular-nums">
-                        #{row.rank}
+                      <TableCell className="tabular text-muted-foreground">
+                        {row.rank}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <span>{row.displayName}</span>
+                          <span className="font-medium">{row.displayName}</span>
                           {row.isCurrentUser && (
                             <Badge variant="secondary">You</Badge>
                           )}
                         </div>
                       </TableCell>
-                      <TableCell className="text-right font-mono tabular-nums">
+                      <TableCell className="tabular text-right font-medium">
                         {row.totalScore} / 100
                       </TableCell>
-                      <TableCell className="text-right font-mono tabular-nums">
+                      <TableCell className="tabular text-right text-muted-foreground">
                         {formatDelta(row.baselineDelta)}
                       </TableCell>
-                      <TableCell className="text-right font-mono tabular-nums">
+                      <TableCell className="tabular text-right text-muted-foreground">
                         {row.vouchCount}
                       </TableCell>
                     </TableRow>
@@ -143,8 +135,8 @@ async function LeaderboardContent() {
 
 function LeaderboardSkeleton() {
   return (
-    <div className="flex flex-col gap-6">
-      <Skeleton className="h-64 rounded-xl" />
+    <div className="flex flex-col gap-8">
+      <Skeleton className="h-64 rounded-[12px]" />
     </div>
   );
 }

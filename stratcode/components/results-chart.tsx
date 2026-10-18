@@ -25,7 +25,7 @@ export function ResultsChart({
   hasBaseline: boolean;
 }) {
   return (
-    <div className="h-64 w-full">
+    <div className="tabular h-64 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={data}
@@ -38,22 +38,23 @@ export function ResultsChart({
           />
           <XAxis
             dataKey="stage"
-            tick={{ fontSize: 12, fill: "currentColor" }}
+            tick={{ fontSize: 12, fill: "var(--muted-foreground)" }}
             tickLine={false}
             axisLine={false}
           />
           <YAxis
             domain={[0, 10]}
             ticks={[0, 2, 4, 6, 8, 10]}
-            tick={{ fontSize: 12, fill: "currentColor" }}
+            tick={{ fontSize: 12, fill: "var(--muted-foreground)" }}
             tickLine={false}
             axisLine={false}
           />
           <Tooltip
+            cursor={{ fill: "var(--secondary)" }}
             contentStyle={{
               backgroundColor: "var(--card)",
               borderColor: "var(--border)",
-              borderRadius: "0.5rem",
+              borderRadius: "10px",
               color: "var(--card-foreground)",
               fontSize: "0.75rem",
             }}
@@ -63,14 +64,14 @@ export function ResultsChart({
             dataKey="you"
             name="Your score"
             fill="var(--primary)"
-            radius={[4, 4, 0, 0]}
+            radius={[6, 6, 0, 0]}
           />
           {hasBaseline && (
             <Bar
               dataKey="baseline"
               name="AI baseline"
               fill="var(--muted-foreground)"
-              radius={[4, 4, 0, 0]}
+              radius={[6, 6, 0, 0]}
             />
           )}
         </BarChart>

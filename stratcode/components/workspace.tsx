@@ -21,7 +21,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -427,33 +426,31 @@ export function Workspace({
       ? "Graded"
       : status === "draft"
         ? "Draft"
-        : status;
+        : "Locked";
 
   return (
     <Card>
-      <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
-            <CardTitle>Your workspace</CardTitle>
-            <Badge variant={status === "graded" ? "default" : isLocked ? "outline" : "secondary"}>
-              {badgeLabel}
-            </Badge>
+            <CardTitle>Workspace</CardTitle>
+            <Badge variant="secondary">{badgeLabel}</Badge>
           </div>
-          <CardDescription>
+          <p className="text-caption tabular">
             {status === "graded" && gradedTotal !== null
-              ? `Graded — Total score: ${gradedTotal} / 100`
+              ? `Total score: ${gradedTotal} / 100`
               : isLocked
-                ? `This submission is ${status} and locked for editing.`
+                ? "Submission is locked and read-only."
                 : isSaved
                   ? "Saved"
                   : "Unsaved changes"}
-          </CardDescription>
+          </p>
         </div>
 
         <div className="flex items-center gap-2">
           <Button
             type="button"
-            variant="outline"
+            variant="secondary"
             size="sm"
             onClick={handleSaveDraft}
             disabled={isLocked || saving || submitting}
@@ -466,7 +463,7 @@ export function Workspace({
             onClick={() => setConfirmOpen(true)}
             disabled={status !== "draft" || saving || submitting}
           >
-            {submitting ? "Grading…" : "Submit"}
+            {submitting ? "Grading…" : "Submit for grading"}
           </Button>
         </div>
       </CardHeader>
@@ -477,112 +474,84 @@ export function Workspace({
             role="dialog"
             aria-modal="true"
             aria-labelledby="confirm-submit-title"
-            className="flex flex-col gap-3 rounded-lg border bg-muted/40 p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-6"
           >
-            <div className="flex flex-col gap-1">
-              <p id="confirm-submit-title" className="text-sm font-medium">
-                Submit for grading?
-              </p>
-              <p className="text-xs text-muted-foreground">
-                You cannot edit after submitting. Your draft will be saved and
-                graded across all three stages.
-              </p>
-            </div>
-            <div className="flex items-center justify-end gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => setConfirmOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                onClick={handleConfirmSubmit}
-              >
-                Confirm &amp; submit
-              </Button>
+            <div className="dialog-surface flex w-full max-w-[400px] flex-col gap-4 rounded-[12px] border border-border bg-card p-6">
+              <div className="flex flex-col gap-1.5">
+                <h3 id="confirm-submit-title" className="text-section-title">
+                  Submit for grading?
+                </h3>
+                <p className="text-secondary">
+                  You cannot edit your answers after submitting.
+                </p>
+              </div>
+              <div className="flex items-center justify-end gap-2 pt-2">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setConfirmOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={handleConfirmSubmit}
+                >
+                  Submit for grading
+                </Button>
+              </div>
             </div>
           </div>
         )}
 
         {submitting && (
-          <p
-            role="status"
-            className="rounded-lg border bg-muted/50 px-3 py-2 text-xs text-muted-foreground"
-          >
-            Grading your submission… This takes up to a minute. Please keep this
-            tab open.
+          <p role="status" className="text-secondary">
+            Grading your submission. This takes up to a minute; keep this tab
+            open.
           </p>
         )}
 
-        {status === "graded" && (
-          <div
-            role="status"
-            className="flex items-center justify-between rounded-lg border bg-muted/50 px-3 py-2 text-xs"
-          >
-            <span className="text-muted-foreground">
-              Submission graded and locked.
-            </span>
-            {gradedTotal !== null && (
-              <span className="font-mono font-semibold tabular-nums">
-                Total score: {gradedTotal} / 100
-              </span>
-            )}
-          </div>
-        )}
-
         {isLocked && status !== "graded" && (
-          <p
-            role="status"
-            className="rounded-lg border bg-muted/50 px-3 py-2 text-xs text-muted-foreground"
-          >
-            This submission is locked because its status is{" "}
-            <span className="font-medium text-foreground">{status}</span>. All
-            stages are read-only.
+          <p role="status" className="text-secondary">
+            This submission is locked ({status}); all stages are read-only.
           </p>
         )}
 
         {saveError && (
-          <p
-            role="alert"
-            className="rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive"
-          >
-            Could not save draft: {saveError}
+          <p role="alert" className="text-secondary text-destructive">
+            Could not save draft ({saveError}); check your connection and try
+            again.
           </p>
         )}
 
         {submitError && (
-          <p
-            role="alert"
-            className="rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive"
-          >
+          <p role="alert" className="text-secondary text-destructive">
             {submitError}
           </p>
         )}
 
         <Tabs defaultValue="stage1" className="w-full">
           <TabsList className="w-full">
-            <TabsTrigger value="stage1">1. Issue tree</TabsTrigger>
-            <TabsTrigger value="stage2">2. Numeric answers</TabsTrigger>
-            <TabsTrigger value="stage3">3. Memo</TabsTrigger>
+            <TabsTrigger value="stage1">Issue tree</TabsTrigger>
+            <TabsTrigger value="stage2">Numbers</TabsTrigger>
+            <TabsTrigger value="stage3">Memo</TabsTrigger>
           </TabsList>
 
           {/* STAGE 1: Issue tree */}
-          <TabsContent value="stage1" className="flex flex-col gap-3 pt-2">
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <TabsContent value="stage1" className="flex flex-col gap-3">
+            <div className="flex items-center justify-between text-caption">
               <span>
-                Break the problem into MECE branches (max depth {MAX_DEPTH}, max{" "}
-                {MAX_NODE_CHARS} chars/node).
+                Up to {MAX_DEPTH} levels deep, {MAX_NODE_CHARS} characters per
+                branch.
               </span>
-              <span className="font-mono tabular-nums">
-                {totalNodes}/{MAX_NODES} nodes
+              <span className="tabular">
+                {totalNodes} / {MAX_NODES}
               </span>
             </div>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1">
               {stage1.map((node, index) => (
                 <IssueTreeBranch
                   key={node.id}
@@ -636,7 +605,7 @@ export function Workspace({
             <div>
               <Button
                 type="button"
-                variant="outline"
+                variant="secondary"
                 size="xs"
                 disabled={isLocked || totalNodes >= MAX_NODES}
                 onClick={() =>
@@ -648,31 +617,22 @@ export function Workspace({
                 }
               >
                 <Plus />
-                Add root branch
+                Add branch
               </Button>
             </div>
           </TabsContent>
 
           {/* STAGE 2: Numeric answers */}
-          <TabsContent value="stage2" className="flex flex-col gap-4 pt-2">
-            <p className="text-xs text-muted-foreground">
-              Enter numeric values only. Leave blank if unanswered.
-            </p>
-            <div className="flex flex-col gap-3">
+          <TabsContent value="stage2" className="flex flex-col gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               {questions.map((q) => (
-                <div
-                  key={q.id}
-                  className="grid items-center gap-2 sm:grid-cols-[1fr_180px]"
-                >
-                  <Label htmlFor={`q-${q.id}`} className="text-sm">
-                    {q.label}
-                  </Label>
-                  <div className="flex items-center gap-2">
+                <div key={q.id} className="flex flex-col gap-1.5">
+                  <Label htmlFor={`q-${q.id}`}>{q.label}</Label>
+                  <div className="relative flex items-center">
                     <Input
                       id={`q-${q.id}`}
                       type="text"
                       inputMode="decimal"
-                      placeholder="—"
                       value={stage2Raw[q.id] ?? ""}
                       onChange={(e) =>
                         handleStage2Change(q.id, e.target.value)
@@ -680,9 +640,9 @@ export function Workspace({
                       onBlur={() => handleStage2Blur(q.id)}
                       readOnly={isLocked}
                       disabled={isLocked}
-                      className="text-right font-mono tabular-nums"
+                      className="tabular pr-14"
                     />
-                    <span className="w-8 shrink-0 text-xs text-muted-foreground">
+                    <span className="pointer-events-none absolute right-3 text-caption">
                       {q.unit}
                     </span>
                   </div>
@@ -692,25 +652,7 @@ export function Workspace({
           </TabsContent>
 
           {/* STAGE 3: Recommendation memo */}
-          <TabsContent value="stage3" className="flex flex-col gap-2 pt-2">
-            <div className="flex items-center justify-between text-xs">
-              <span
-                className={
-                  wordCount > MEMO_SOFT_WORDS
-                    ? "font-medium text-amber-600 dark:text-amber-400"
-                    : "text-muted-foreground"
-                }
-              >
-                {wordCount} / {MEMO_SOFT_WORDS} words
-                {wordCount > MEMO_SOFT_WORDS
-                  ? " — over the 300-word soft limit; consider tightening."
-                  : ""}
-              </span>
-              <span className="font-mono text-muted-foreground tabular-nums">
-                {stage3.length}/{MEMO_MAX_CHARS} chars
-              </span>
-            </div>
-
+          <TabsContent value="stage3" className="flex flex-col gap-2">
             <Textarea
               value={stage3}
               onChange={(e) =>
@@ -720,8 +662,22 @@ export function Workspace({
               readOnly={isLocked}
               disabled={isLocked}
               rows={10}
-              placeholder="Start with your conclusion and recommendation, then support it with numbers from Stage 2, key risks, and a measurable next step…"
+              placeholder="State your recommendation first, then support it with numbers from Stage 2, key risks, and a measurable next step."
             />
+            <div className="flex justify-end">
+              <span
+                className={
+                  wordCount > MEMO_SOFT_WORDS
+                    ? "text-caption tabular text-destructive"
+                    : "text-caption tabular"
+                }
+              >
+                {wordCount} / {MEMO_SOFT_WORDS} words
+                {wordCount > MEMO_SOFT_WORDS
+                  ? " — over the suggested length"
+                  : ""}
+              </span>
+            </div>
           </TabsContent>
         </Tabs>
       </CardContent>
@@ -760,33 +716,29 @@ function IssueTreeBranch({
   const canAddChild = canAddMore && depth < MAX_DEPTH;
   const canIndent =
     !isLocked && siblingIndex > 0 && canIndentNode(rootTree, node.id);
-  const canOutdent = !isLocked && depth > 1 && canOutdentNode(rootTree, node.id);
+  const canOutdent =
+    !isLocked && depth > 1 && canOutdentNode(rootTree, node.id);
   const canDelete = !isLocked && totalNodes > 1;
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <div className="flex items-center gap-1.5">
-        <span className="w-5 shrink-0 text-right font-mono text-[11px] text-muted-foreground">
-          L{depth}
-        </span>
-        <Input
+    <div className="flex flex-col gap-1">
+      <div className="group/row flex items-center gap-1.5">
+        <input
+          type="text"
           value={node.text}
           maxLength={MAX_NODE_CHARS}
           placeholder={
             depth === 1
-              ? "Top-level branch (e.g. Price, Mix, Unit cost)…"
-              : "Sub-branch or testable hypothesis…"
+              ? "Top-level branch"
+              : "Sub-branch or testable hypothesis"
           }
           onChange={(e) => onChangeText(node.id, e.target.value)}
           readOnly={isLocked}
           disabled={isLocked}
-          className="flex-1"
+          className="touch-target min-w-0 flex-1 rounded-[10px] border border-transparent bg-transparent px-2.5 py-1.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-border focus:bg-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50"
         />
-        <span className="w-12 shrink-0 text-right font-mono text-[10px] text-muted-foreground tabular-nums">
-          {node.text.length}/{MAX_NODE_CHARS}
-        </span>
 
-        <div className="flex shrink-0 items-center gap-0.5">
+        <div className="row-actions flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity duration-150 group-hover/row:opacity-100 group-focus-within/row:opacity-100">
           <Button
             type="button"
             variant="ghost"
@@ -846,7 +798,7 @@ function IssueTreeBranch({
       </div>
 
       {node.children.length > 0 && (
-        <div className="ml-4 flex flex-col gap-1.5 border-l pl-3">
+        <div className="ml-4 flex flex-col gap-1 border-l border-border pl-3">
           {node.children.map((child, idx) => (
             <IssueTreeBranch
               key={child.id}

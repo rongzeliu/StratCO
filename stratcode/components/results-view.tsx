@@ -24,7 +24,7 @@ import {
 
 function formatDelta(delta: number | null): string {
   if (delta === null || !Number.isFinite(delta)) {
-    return "no baseline yet";
+    return "No baseline yet";
   }
   const rounded = Math.round(delta * 100) / 100;
   const sign = rounded > 0 ? "+" : "";
@@ -74,28 +74,20 @@ export function ResultsView({
     null;
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8">
       {/* Headline + Stage Comparison Bar Chart */}
       <Card>
         <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-1">
-            <CardTitle className="text-xl">
-              Total Score:{" "}
-              <span className="font-mono tabular-nums">{total}</span> / 100
+            <CardTitle>
+              Total score: <span className="tabular">{total} / 100</span>
             </CardTitle>
-            <CardDescription>
-               Weighted: 3× Issue tree ({scores?.stage1 ?? 0}/10) + 3× Numbers (
-              {scores?.stage2 ?? 0}/10) + 4× Memo ({scores?.stage3 ?? 0}/10)
+            <CardDescription className="tabular">
+              3 × Issue tree ({scores?.stage1 ?? 0}/10) + 3 × Numbers (
+              {scores?.stage2 ?? 0}/10) + 4 × Memo ({scores?.stage3 ?? 0}/10)
             </CardDescription>
           </div>
-          <Badge
-            variant={
-              submission.baseline_delta !== null && submission.baseline_delta > 0
-                ? "default"
-                : "secondary"
-            }
-            className="font-mono"
-          >
+          <Badge variant="secondary" className="tabular">
             {deltaText}
           </Badge>
         </CardHeader>
@@ -110,26 +102,26 @@ export function ResultsView({
           <CardHeader>
             <CardTitle>What a founder will see</CardTitle>
             <CardDescription>
-              Executive summary shown on the founder review dashboard
+              Summary shown on the founder dashboard
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-sm leading-relaxed">{founderSummary}</p>
+            <p className="max-w-[65ch] text-body">{founderSummary}</p>
           </CardContent>
         </Card>
       )}
 
-      {/* Stage 2 table: Correct / Incorrect badges only, never correct values */}
+      {/* Stage 2 table: Correct / Incorrect text labels only, never correct values */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Stage 2: Numeric answers</CardTitle>
-            <span className="font-mono text-xs text-muted-foreground tabular-nums">
+            <span className="text-caption tabular">
               {scores?.stage2 ?? 0} / 10
             </span>
           </div>
           <CardDescription>
-            Deterministic grading against the reference dataset
+            Graded against the reference dataset
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -147,11 +139,15 @@ export function ResultsView({
                   <TableRow key={q.id}>
                     <TableCell>{q.label}</TableCell>
                     <TableCell className="text-right">
-                      <Badge
-                        variant={isCorrect ? "default" : "destructive"}
+                      <span
+                        className={
+                          isCorrect
+                            ? "text-sm font-medium text-success"
+                            : "text-sm font-medium text-destructive"
+                        }
                       >
                         {isCorrect ? "Correct" : "Incorrect"}
-                      </Badge>
+                      </span>
                     </TableCell>
                   </TableRow>
                 );
@@ -162,7 +158,7 @@ export function ResultsView({
       </Card>
 
       {/* Stage 1 & Stage 3 qualitative feedback */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-8 lg:grid-cols-2">
         <StageFeedbackCard
           title="Stage 1: Issue tree"
           score={scores?.stage1 ?? null}
@@ -193,15 +189,13 @@ function StageFeedbackCard({
         <div className="flex items-center justify-between">
           <CardTitle>{title}</CardTitle>
           {score !== null && (
-            <span className="font-mono text-xs text-muted-foreground tabular-nums">
-              {score} / 10
-            </span>
+            <span className="text-caption tabular">{score} / 10</span>
           )}
         </div>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4 text-sm">
+      <CardContent className="flex flex-col gap-4">
         {!stageFeedback ? (
-          <p className="text-muted-foreground">
+          <p className="text-secondary">
             Detailed feedback is not available for this stage.
           </p>
         ) : (
@@ -209,12 +203,12 @@ function StageFeedbackCard({
             <BulletSection
               heading="Strengths"
               items={stageFeedback.strengths}
-              emptyText="No specific strengths noted."
+              emptyText="No strengths noted."
             />
             <BulletSection
               heading="Gaps"
               items={stageFeedback.gaps}
-              emptyText="No major gaps noted."
+              emptyText="No gaps noted."
             />
             <BulletSection
               heading="Beyond the AI baseline"
@@ -223,22 +217,20 @@ function StageFeedbackCard({
             />
 
             {stageFeedback.criteria.length > 0 && (
-              <details className="group rounded-lg border bg-muted/30 px-3 py-2">
-                <summary className="cursor-pointer text-xs font-medium select-none">
+              <details className="rounded-[10px] border border-border px-4 py-3">
+                <summary className="cursor-pointer text-sm font-medium select-none">
                   Per-criterion evidence ({stageFeedback.criteria.length})
                 </summary>
-                <div className="mt-3 flex flex-col gap-2.5 border-t pt-2.5">
+                <div className="mt-3 flex flex-col gap-3 border-t border-border pt-3">
                   {stageFeedback.criteria.map((c) => (
-                    <div key={c.id} className="flex flex-col gap-0.5 text-xs">
-                      <div className="flex items-center justify-between font-medium">
-                        <span className="font-mono">{c.id}</span>
-                        <span className="font-mono text-muted-foreground tabular-nums">
+                    <div key={c.id} className="flex flex-col gap-0.5">
+                      <div className="flex items-center justify-between text-sm font-medium">
+                        <span>{c.id}</span>
+                        <span className="text-caption tabular">
                           {Math.round(c.score * 100)}%
                         </span>
                       </div>
-                      <p className="text-muted-foreground leading-relaxed">
-                        {c.evidence}
-                      </p>
+                      <p className="text-secondary">{c.evidence}</p>
                     </div>
                   ))}
                 </div>
@@ -262,13 +254,11 @@ function BulletSection({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <h3 className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-        {heading}
-      </h3>
+      <h3 className="text-sm font-semibold text-foreground">{heading}</h3>
       {items.length === 0 ? (
-        <p className="text-xs text-muted-foreground">{emptyText}</p>
+        <p className="text-secondary">{emptyText}</p>
       ) : (
-        <ul className="list-disc space-y-1 pl-5 text-xs leading-relaxed">
+        <ul className="list-disc space-y-1 pl-5 text-secondary">
           {items.map((item, idx) => (
             <li key={idx}>{item}</li>
           ))}

@@ -5,46 +5,36 @@ import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/login/actions";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  HeaderShell,
+  NavLinks,
+  NavLinksFallback,
+} from "@/components/nav-links";
 
 export function AppHeader() {
   return (
-    <header className="border-b">
-      <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-6">
-        <div className="flex items-center gap-6">
-          <Link href="/challenges" className="font-semibold tracking-tight">
+    <HeaderShell>
+      <div className="mx-auto flex h-14 w-full max-w-[1120px] items-center justify-between gap-4 px-6">
+        <div className="flex min-w-0 items-center gap-6">
+          <Link
+            href="/challenges"
+            className="pressable focus-ring rounded-[10px] font-semibold tracking-tight text-foreground"
+          >
             StratCode
           </Link>
-          <nav className="flex items-center gap-4 text-sm text-muted-foreground">
-            <Link
-              href="/challenges"
-              className="transition-colors hover:text-foreground"
-            >
-              Challenges
-            </Link>
-            <Link
-              href="/leaderboard"
-              className="transition-colors hover:text-foreground"
-            >
-              Leaderboard
-            </Link>
-            <Link
-              href="/profile"
-              className="transition-colors hover:text-foreground"
-            >
-              Profile
-            </Link>
-          </nav>
+          <Suspense fallback={<NavLinksFallback />}>
+            <FounderAwareNav />
+          </Suspense>
         </div>
-        <Suspense fallback={<Skeleton className="h-6 w-44" />}>
+        <Suspense fallback={<Skeleton className="h-6 w-36" />}>
           <UserMenu />
         </Suspense>
       </div>
-    </header>
+    </HeaderShell>
   );
 }
 
-// Reads the session + profile role behind the Suspense boundary above.
-async function UserMenu() {
+async function getUserAndRole() {
   const supabase = await createClient();
   const {
     data: { user },
@@ -61,23 +51,24 @@ async function UserMenu() {
     .eq("id", user.id)
     .maybeSingle();
 
-  const isFounder = profile?.role === "founder";
+  return { user, isFounder: profile?.role === "founder" };
+}
+
+async function FounderAwareNav() {
+  const { isFounder } = await getUserAndRole();
+  return <NavLinks showFounder={isFounder} />;
+}
+
+async function UserMenu() {
+  const { user } = await getUserAndRole();
 
   return (
-    <div className="flex items-center gap-3">
-      {isFounder && (
-        <Link
-          href="/founder"
-          className="text-sm font-medium text-foreground transition-colors hover:text-foreground/80"
-        >
-          Founder
-        </Link>
-      )}
-      <span className="hidden text-sm text-muted-foreground sm:inline">
+    <div className="flex items-center gap-4">
+      <span className="hidden max-w-52 truncate text-secondary sm:inline">
         {user.email}
       </span>
       <form action={signOut}>
-        <Button type="submit" variant="outline" size="sm">
+        <Button type="submit" variant="ghost" size="sm" className="px-2">
           Sign out
         </Button>
       </form>

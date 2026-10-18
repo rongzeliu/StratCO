@@ -57,11 +57,11 @@ export function VouchButton({
   return (
     <div className="flex flex-col items-end gap-2">
       <div className="flex items-center gap-2">
-        {vouched && <Badge variant="default">Vouched</Badge>}
+        {vouched && <Badge variant="secondary">Vouched</Badge>}
         <Button
           type="button"
           size="sm"
-          variant={vouched ? "outline" : "default"}
+          variant={vouched ? "secondary" : "default"}
           disabled={vouched}
           onClick={() => {
             setError(null);
@@ -81,57 +81,67 @@ export function VouchButton({
           role="dialog"
           aria-modal="true"
           aria-labelledby={`vouch-title-${submissionId}`}
-          className="mt-2 w-full rounded-xl border bg-muted/40 p-4 text-left"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-6"
         >
-          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-            <div className="flex items-center justify-between">
-              <Label
-                id={`vouch-title-${submissionId}`}
-                htmlFor={`vouch-note-${submissionId}`}
-                className="text-sm font-medium"
-              >
-                Outcome note (required, {MIN_NOTE}–{MAX_NOTE} characters)
-              </Label>
-              <span className="font-mono text-xs text-muted-foreground tabular-nums">
-                {trimmedLength}/{MAX_NOTE}
-              </span>
-            </div>
+          <div className="dialog-surface w-full max-w-[440px] rounded-[12px] border border-border bg-card p-6 text-left">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              <div className="flex flex-col gap-1">
+                <h3
+                  id={`vouch-title-${submissionId}`}
+                  className="text-section-title"
+                >
+                  Verify and vouch
+                </h3>
+                <p className="text-secondary">
+                  Describe what you implemented or plan to implement and the
+                  expected outcome ({MIN_NOTE}–{MAX_NOTE} characters).
+                </p>
+              </div>
 
-            <Textarea
-              id={`vouch-note-${submissionId}`}
-              value={note}
-              onChange={(e) => setNote(e.target.value.slice(0, MAX_NOTE))}
-              maxLength={MAX_NOTE}
-              rows={3}
-              placeholder="What did you implement or plan to implement, and what result do you expect or see?"
-              required
-            />
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor={`vouch-note-${submissionId}`}>
+                  Outcome note
+                </Label>
+                <Textarea
+                  id={`vouch-note-${submissionId}`}
+                  value={note}
+                  onChange={(e) => setNote(e.target.value.slice(0, MAX_NOTE))}
+                  maxLength={MAX_NOTE}
+                  rows={4}
+                  placeholder="What did you implement or plan to implement, and what result do you expect or see?"
+                  required
+                />
+                <span className="self-end text-caption tabular">
+                  {trimmedLength} / {MAX_NOTE}
+                </span>
+              </div>
 
-            {error && (
-              <p role="alert" className="text-xs text-destructive">
-                {error}
-              </p>
-            )}
+              {error && (
+                <p role="alert" className="text-secondary text-destructive">
+                  {error}
+                </p>
+              )}
 
-            <div className="flex items-center justify-end gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                disabled={submitting}
-                onClick={() => setDialogOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                size="sm"
-                disabled={!isValidLength || submitting}
-              >
-                {submitting ? "Submitting…" : "Submit vouch"}
-              </Button>
-            </div>
-          </form>
+              <div className="flex items-center justify-end gap-2 pt-1">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  disabled={submitting}
+                  onClick={() => setDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  size="sm"
+                  disabled={!isValidLength || submitting}
+                >
+                  {submitting ? "Submitting…" : "Submit vouch"}
+                </Button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>
