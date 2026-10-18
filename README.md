@@ -1,6 +1,6 @@
 # StratCode
 
-A skills-verification platform where business cases are the assessment. Solvers work through realistic small-business problems in three stages and are scored against an AI baseline, so a strong result shows judgment beyond what a chatbot produces. Founders review a short list of top candidates and vouch for them.
+Unfinished hackathon project- A skills-verification platform where business cases are the assessment. Solvers work through realistic small-business problems in three stages and are scored against an AI baseline, so a strong result shows judgment beyond what a chatbot produces. Founders review a short list of top candidates and vouch for them.
 
 **Live site:** https://strat-co.vercel.app
 
