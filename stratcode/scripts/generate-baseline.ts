@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { GoogleGenAI } from "@google/genai";
 import { z } from "zod";
-import { GEMINI_MODEL } from "../lib/config";
+import { GEMINI_MODEL, GEMINI_MODELS } from "../lib/config";
 import { createAdminClient } from "../lib/supabase/admin";
 import {
   ChallengeAnswerItemSchema,
@@ -18,6 +18,11 @@ import { totalScore } from "../lib/grading/total";
 
 // One-off local script to generate and grade the AI baseline for a challenge.
 // Never imported by the Next.js app.
+try {
+  process.loadEnvFile?.(".env.local");
+} catch {
+  // Ignore if .env.local is not present (e.g., env vars already set in shell)
+}
 
 const Stage2QuestionItemSchema = z.object({
   id: z.string(),
@@ -89,44 +94,54 @@ async function generateBaselineCandidate(
   ].join("\n");
 
   let lastError: unknown;
-  for (let attempt = 0; attempt < 2; attempt++) {
-    try {
-      const response = await ai.models.generateContent({
-        model: GEMINI_MODEL,
-        contents: prompt,
-        config: {
-          systemInstruction,
-          temperature: 0.4,
-          responseMimeType: "application/json",
-        },
-      });
+  for (const model of GEMINI_MODELS) {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const response = await ai.models.generateContent({
+          model,
+          contents: prompt,
+          config: {
+            systemInstruction,
+            temperature: 0.4,
+            responseMimeType: "application/json",
+          },
+        });
 
-      const rawText = response.text;
-      if (!rawText) {
-        throw new Error("Gemini returned an empty response.");
-      }
+        const rawText = response.text;
+        if (!rawText) {
+          throw new Error("Gemini returned an empty response.");
+        }
 
-      const parsedJson: unknown = JSON.parse(rawText);
-      const parsed = BaselineCandidateOutputSchema.parse(parsedJson);
+        const parsedJson: unknown = JSON.parse(rawText);
+        const parsed = BaselineCandidateOutputSchema.parse(parsedJson);
 
-      for (const q of questions) {
-        const v = parsed.stage2[q.id];
-        if (typeof v !== "number" || !Number.isFinite(v)) {
+        for (const q of questions) {
+          const v = parsed.stage2[q.id];
+          if (typeof v !== "number" || !Number.isFinite(v)) {
+            throw new Error(
+              `Baseline missing numeric answer for question "${q.id}".`
+            );
+          }
+        }
+
+        if (countWords(parsed.stage3) > 300) {
           throw new Error(
-            `Baseline missing numeric answer for question "${q.id}".`
+            `Baseline memo exceeded 300 words (${countWords(parsed.stage3)} words).`
           );
         }
-      }
 
-      if (countWords(parsed.stage3) > 300) {
-        throw new Error(
-          `Baseline memo exceeded 300 words (${countWords(parsed.stage3)} words).`
-        );
+        return parsed;
+      } catch (err) {
+        lastError = err;
+        const msg = err instanceof Error ? err.message : String(err);
+        if (
+          msg.includes("429") ||
+          msg.includes("RESOURCE_EXHAUSTED") ||
+          msg.includes("404")
+        ) {
+          break;
+        }
       }
-
-      return parsed;
-    } catch (err) {
-      lastError = err;
     }
   }
 

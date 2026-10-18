@@ -17,6 +17,11 @@ import { totalScore } from "../lib/grading/total";
 // and grades + saves them identically to the submit route.
 // Safe to re-run: skips users/submissions that already exist.
 // Never imported by the Next.js app.
+try {
+  process.loadEnvFile?.(".env.local");
+} catch {
+  // Ignore if .env.local is not present (e.g., env vars already set in shell)
+}
 
 const DEFAULT_CHALLENGE_ID = "11111111-1111-4111-8111-111111111111";
 

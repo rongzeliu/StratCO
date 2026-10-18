@@ -1,0 +1,105 @@
+{
+  "exemplars": [
+    {
+      "label": "weak",
+      "stage1": [
+        {
+          "id": "w1",
+          "text": "Westside has 150 customers per day which is less than Downtown",
+          "children": []
+        },
+        {
+          "id": "w2",
+          "text": "Rent is higher at Westside ($7,200 vs $6,000)",
+          "children": []
+        }
+      ],
+      "stage2": {
+        "cm_per_customer": 8,
+        "loc2_cm_per_day": 1800,
+        "loc2_breakeven_cust": 70,
+        "loc2_monthly_profit": 15000,
+        "payback_standalone": 7,
+        "payback_net": 7
+      },
+      "stage3": "Yes, the owner should open the second location on the Westside because 150 customers per day at $12 each brings in $1,800 a day in sales, which is plenty to cover the $7,200 monthly rent and grow the brand."
+    },
+    {
+      "label": "medium",
+      "stage1": [
+        {
+          "id": "m1",
+          "text": "Standalone profitability of Location 2",
+          "children": [
+            {
+              "id": "m1_1",
+              "text": "Daily contribution margin ($1,200) vs daily labor ($560) and lease ($240)",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "m2",
+          "text": "Buildout payback and cannibalization",
+          "children": [
+            {
+              "id": "m2_1",
+              "text": "$108,000 buildout cost and 25 cannibalized customers from Location 1",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "stage2": {
+        "cm_per_customer": 8,
+        "loc2_cm_per_day": 1200,
+        "loc2_breakeven_cust": 100,
+        "loc2_monthly_profit": 12000,
+        "payback_standalone": 9,
+        "payback_net": 12
+      },
+      "stage3": "Location 2 earns $8 contribution margin per customer and $1,200 per day at 150 customers. After $560 daily labor and $240 daily lease ($800/day fixed cost, or 100 customers/day to break even), standalone monthly profit is $12,000, giving a 9-month payback on the $108,000 buildout. However, cannibalizing 25 customers a day from Downtown reduces net profit, so we should try to negotiate the lease before signing."
+    },
+    {
+      "label": "strong",
+      "stage1": [
+        {
+          "id": "s1",
+          "text": "1. Network incremental cash flow & payback (Priority 1 — governs capital allocation)",
+          "children": [
+            {
+              "id": "s1_1",
+              "text": "Hypothesis: Cannibalizing 25 daily customers from Loc 1 erodes $6,000/mo, cutting Loc 2's $12,000/mo profit to $6,000/mo net",
+              "children": []
+            },
+            {
+              "id": "s1_2",
+              "text": "Hypothesis: Net payback on the $108,000 upfront_buildout doubles from 9 months (standalone) to 18 months (net)",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "s2",
+          "text": "2. Standalone unit economics & break-even cushion (Priority 2 — downside resilience)",
+          "children": [
+            {
+              "id": "s2_1",
+              "text": "Hypothesis: At $8/order CM and $800/day fixed cost ($560 labor + $240 lease), standalone break-even is 100/day and network break-even is 125/day",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "stage2": {
+        "cm_per_customer": 8,
+        "loc2_cm_per_day": 1200,
+        "loc2_breakeven_cust": 100,
+        "loc2_monthly_profit": 12000,
+        "payback_standalone": 9,
+        "payback_net": 18
+      },
+      "stage3": "Proceed with Location 2 only if the landlord grants a $24,000 tenant-improvement (TI) allowance or reduces rent to $6,000/month to bring cannibalization-adjusted payback under 14 months.\n\nDiagnosis: On a standalone basis, Westside looks attractive: each order generates $8.00 contribution margin ($12.00 AOV - $4.00 variable cost), or $1,200/day at 150 customers. Against $800/day in fixed costs ($560 labor + $240/day for the $7,200 monthly lease), Westside breaks even at 100 customers/day, earns $400/day ($12,000/month), and pays back the $108,000 buildout in 9.0 months. However, because 25 of those daily customers are cannibalized from Downtown (costing 25 x $8 x 30 = $6,000/month in lost Location 1 profit), net incremental profit across both shops is only $6,000/month ($200/day). That raises the effective network break-even to 125 customers/day and doubles true payback to 18.0 months.\n\nRecommendations:\n1. Counter-offer the lease: request a $24,000 TI credit (cutting net buildout to $84,000, or 14-month net payback) or match Downtown's $6,000/month rent (+$1,200/month cash flow, cutting net payback to 15 months).\n2. Protect Downtown traffic: launch a Downtown-only afternoon pickup bundle so existing regulars do not defect.\n\nRisks & Mitigation: With a network break-even of 125 customers/day, a 17% shortfall in Westside traffic (falling from 150 to 125/day) wipes out all incremental profit. Mitigate by staging staffing at $480/day during the first 60 days.\n\nNext Step: Before signing, run a 2-week zip-code check on Downtown POS receipts and a weekend Westside pop-up; sign only if projected net new Westside demand exceeds 130 non-Downtown customers/day."
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+period,product,units_sold,avg_price,unit_cost
+Before,Croissant,2000,4.00,1.50
+Before,Sourdough loaf,1000,6.00,2.50
+Before,Cinnamon roll,1500,4.00,1.60
+After,Croissant,1700,4.40,1.50
+After,Sourdough loaf,950,6.60,2.50
+After,Cinnamon roll,1200,4.40,1.60

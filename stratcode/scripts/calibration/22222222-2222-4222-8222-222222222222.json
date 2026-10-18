@@ -1,0 +1,110 @@
+{
+  "exemplars": [
+    {
+      "label": "weak",
+      "stage1": [
+        {
+          "id": "w1",
+          "text": "Customers bought fewer pastries after the price increase",
+          "children": []
+        },
+        {
+          "id": "w2",
+          "text": "Prices went up by 10% across the bakery",
+          "children": []
+        }
+      ],
+      "stage2": {
+        "vol_change_pct": -10.0,
+        "rev_before": 20000,
+        "rev_after": 19500,
+        "profit_before": 12100,
+        "profit_after": 11500,
+        "breakeven_loss": -10.0
+      },
+      "stage3": "The 10% price increase caused customers to buy less, so the bakery should lower prices back to where they were before across all items and run a marketing promotion to bring customers back."
+    },
+    {
+      "label": "medium",
+      "stage1": [
+        {
+          "id": "m1",
+          "text": "Unit margin gain from the 10% price increase",
+          "children": [
+            {
+              "id": "m1_1",
+              "text": "Higher avg_price across Croissant, Sourdough, and Cinnamon roll",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "m2",
+          "text": "Volume loss from price elasticity",
+          "children": [
+            {
+              "id": "m2_1",
+              "text": "Croissant and Cinnamon roll lost more units than Sourdough",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "stage2": {
+        "vol_change_pct": -14.44,
+        "rev_before": 20000,
+        "rev_after": 19030,
+        "profit_before": 12100,
+        "profit_after": 12005,
+        "breakeven_loss": -15.0
+      },
+      "stage3": "Overall variable profit dipped slightly from $12,100 to $12,005 (-$95) while revenue fell from $20,000 to $19,030. Sourdough held up well with only a 5% volume drop, but Croissants and Cinnamon rolls lost too much volume. We should keep the higher price on Sourdough ($6.60) and revert Cinnamon rolls back to $4.00. We should track sales next month."
+    },
+    {
+      "label": "strong",
+      "stage1": [
+        {
+          "id": "s1",
+          "text": "1. Product-level volume loss vs. break-even threshold (Priority 1 — test first)",
+          "children": [
+            {
+              "id": "s1_1",
+              "text": "Hypothesis: Cinnamon roll units_sold fell 20.0% (1,500 to 1,200), exceeding its -14.29% break-even threshold and cutting profit by $240",
+              "children": []
+            },
+            {
+              "id": "s1_2",
+              "text": "Hypothesis: Croissant units_sold fell 15.0% (2,000 to 1,700), exceeding its -13.79% break-even threshold and cutting profit by $70",
+              "children": []
+            },
+            {
+              "id": "s1_3",
+              "text": "Hypothesis: Sourdough units_sold fell only 5.0% (1,000 to 950), well inside its -14.63% break-even threshold, growing profit by +$215",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "s2",
+          "text": "2. Per-unit contribution margin expansion (Priority 2 — quantifies the upside per unit kept)",
+          "children": [
+            {
+              "id": "s2_1",
+              "text": "Hypothesis: With unit_cost constant, +10% avg_price expanded unit margin by +$0.40 on Croissant/Cinnamon roll and +$0.60 on Sourdough",
+              "children": []
+            }
+          ]
+        }
+      ],
+      "stage2": {
+        "vol_change_pct": -14.44,
+        "rev_before": 20000,
+        "rev_after": 19030,
+        "profit_before": 12100,
+        "profit_after": 12005,
+        "breakeven_loss": -13.79
+      },
+      "stage3": "Replace the blanket 10% hike with tiered pricing: keep Sourdough at $6.60, revert Cinnamon rolls to $4.00, and test Croissants at $4.20 (a 5% increase) to lift monthly variable profit above $12,450.\n\nDiagnosis: The across-the-board 10% hike reduced total volume by 14.44% (4,500 to 3,850 units), revenue by $970 ($20,000 to $19,030), and variable profit by $95 ($12,100 to $12,005). However, product performance diverged sharply:\n- Sourdough loaf is inelastic: volume fell just 5.0% (1,000 to 950), lifting variable profit by +$215 ($3,500 to $3,715).\n- Croissant crossed its -13.79% break-even volume loss threshold: a 15.0% drop (2,000 to 1,700) reduced profit by -$70 ($5,000 to $4,930).\n- Cinnamon roll suffered the worst elasticity: a 20.0% volume drop (1,500 to 1,200 vs. -14.29% break-even) reduced profit by -$240 ($3,600 to $3,360).\n\nRecommendations:\n1. Keep Sourdough at $6.60 (+$215/month proven gain).\n2. Roll Cinnamon roll back to $4.00 (or offer a 2-for-$8.00 bundle) to recover the 300 lost units and +$240/month in variable profit.\n3. Price Croissants at $4.20 (+5% instead of +10%), where break-even volume loss is -7.41%.\n\nRisks & Mitigation: Rolling back pastry prices while keeping Sourdough at $6.60 could shift morning traffic away from loaves; mitigate by pairing a $4.00 Cinnamon roll add-on discount with Sourdough purchases.\n\nNext Step: Track weekly unit volumes and variable profit per SKU for 4 weeks, targeting >=1,900 Croissants, >=1,450 Cinnamon rolls, and >=$12,400 total monthly variable profit."
+    }
+  ]
+}

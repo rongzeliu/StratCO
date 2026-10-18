@@ -3,6 +3,11 @@ import { createAdminClient } from "../lib/supabase/admin";
 
 // Local security verification script proving database RLS and column grants work.
 // Never imported by the Next.js app.
+try {
+  process.loadEnvFile?.(".env.local");
+} catch {
+  // Ignore if .env.local is not present (e.g., env vars already set in shell)
+}
 
 const CHALLENGE_1_ID = "11111111-1111-4111-8111-111111111111";
 
@@ -25,22 +30,55 @@ type TestResult = {
   detail: string;
 };
 
-async function main() {
-  const emailA = process.env.TEST_USER_A_EMAIL;
-  const passwordA = process.env.TEST_USER_A_PASSWORD;
-  const emailB = process.env.TEST_USER_B_EMAIL;
-  const passwordB = process.env.TEST_USER_B_PASSWORD;
-
-  if (!emailA || !passwordA || !emailB || !passwordB) {
-    console.error(
-      "Missing TEST_USER_A_EMAIL, TEST_USER_A_PASSWORD, TEST_USER_B_EMAIL, or TEST_USER_B_PASSWORD in environment."
-    );
-    process.exit(1);
+async function ensureTestUser(
+  admin: ReturnType<typeof createAdminClient>,
+  email: string,
+  password: string
+) {
+  const { data: listData, error: listErr } = await admin.auth.admin.listUsers({
+    page: 1,
+    perPage: 200,
+  });
+  if (listErr) {
+    throw new Error(`Failed to list users: ${listErr.message}`);
   }
+  const existing = listData.users.find(
+    (u) => u.email?.toLowerCase() === email.toLowerCase()
+  );
+  if (existing) {
+    await admin.auth.admin.updateUserById(existing.id, {
+      password,
+      email_confirm: true,
+    });
+    return existing.id;
+  }
+  const { data: created, error: createErr } = await admin.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+  });
+  if (createErr || !created.user) {
+    throw new Error(
+      `Failed to create test user ${email}: ${createErr?.message ?? "unknown"}`
+    );
+  }
+  return created.user.id;
+}
+
+async function main() {
+  const emailA = process.env.TEST_USER_A_EMAIL || "rls-user-a@stratcode.local";
+  const passwordA = process.env.TEST_USER_A_PASSWORD || "StratCodeRlsTest123!";
+  const emailB = process.env.TEST_USER_B_EMAIL || "rls-user-b@stratcode.local";
+  const passwordB = process.env.TEST_USER_B_PASSWORD || "StratCodeRlsTest123!";
 
   const clientA = createAnonBrowserLikeClient();
   const clientB = createAnonBrowserLikeClient();
   const admin = createAdminClient();
+
+  if (!process.env.TEST_USER_A_EMAIL || !process.env.TEST_USER_B_EMAIL) {
+    await ensureTestUser(admin, emailA, passwordA);
+    await ensureTestUser(admin, emailB, passwordB);
+  }
 
   const { data: authA, error: errA } = await clientA.auth.signInWithPassword({
     email: emailA,

@@ -15,6 +15,11 @@ import { totalScore } from "../lib/grading/total";
 // Local calibration script verifying that the grader ranks weak < medium < strong
 // on the total score and on Stage 1 and Stage 3 separately.
 // Never imported by the Next.js app.
+try {
+  process.loadEnvFile?.(".env.local");
+} catch {
+  // Ignore if .env.local is not present (e.g., env vars already set in shell)
+}
 
 const DEFAULT_CHALLENGE_ID = "11111111-1111-4111-8111-111111111111";
 
